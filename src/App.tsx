@@ -4,8 +4,6 @@ import { db } from './firebase';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, getDocs, where, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { GoogleGenAI, Type } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
 // --- Types ---
 type Role = 'student' | 'teacher';
 
@@ -765,6 +763,9 @@ function StudentPanel({
         setIsSubmitting(false);
         return;
       }
+
+      // Initialize GoogleGenAI right before making the API call
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
       // 1. Semantic Matching & Grading via Gemini
       const prompt = `
