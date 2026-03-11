@@ -765,7 +765,13 @@ function StudentPanel({
       }
 
       // Initialize GoogleGenAI right before making the API call
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const apiKey = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) {
+        alert("Lỗi: Không tìm thấy API Key của Gemini. Nếu bạn đang tự deploy (ví dụ lên Vercel), vui lòng thêm biến môi trường VITE_GEMINI_API_KEY vào cài đặt của Vercel.");
+        setIsSubmitting(false);
+        return;
+      }
+      const ai = new GoogleGenAI({ apiKey });
 
       // 1. Semantic Matching & Grading via Gemini
       const prompt = `
