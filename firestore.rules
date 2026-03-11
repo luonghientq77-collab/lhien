@@ -1,0 +1,84 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: lessons
+    // Document ID: auto-generated
+    // Fields:
+    //   - teacherId: string (required)
+    //   - chapterName: string (required)
+    //   - sections: list of objects (required)
+    //   - createdAt: number (required)
+    //
+    // Collection: submissions
+    // Document ID: auto-generated
+    // Fields:
+    //   - lessonId: string (required)
+    //   - studentName: string (required)
+    //   - studentClass: string (required)
+    //   - studentOrder: string (required)
+    //   - studentPin: string (required)
+    //   - testSection: string (required)
+    //   - transcript: string (required)
+    //   - score: number (required)
+    //   - feedback: string (required)
+    //   - missingKeywords: list of strings (required)
+    //   - matchedKeywords: list of strings (required)
+    //   - createdAt: number (required)
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+    
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Domain Validators
+    function isValidLesson() {
+      return hasRequiredFields(['teacherId', 'chapterName', 'sections', 'createdAt']) &&
+             request.resource.data.teacherId is string && request.resource.data.teacherId.size() > 0 && request.resource.data.teacherId.size() < 100 &&
+             request.resource.data.chapterName is string && request.resource.data.chapterName.size() > 0 && request.resource.data.chapterName.size() < 200 &&
+             request.resource.data.sections is list && request.resource.data.sections.size() > 0 && request.resource.data.sections.size() < 20 &&
+             request.resource.data.createdAt is number &&
+             (!('isActive' in request.resource.data) || request.resource.data.isActive is bool);
+    }
+
+    function isValidSubmission() {
+      return hasRequiredFields(['lessonId', 'testSection', 'transcript', 'score', 'feedback', 'missingKeywords', 'matchedKeywords', 'createdAt']) &&
+             request.resource.data.lessonId is string && request.resource.data.lessonId.size() > 0 && request.resource.data.lessonId.size() < 100 &&
+             (!('studentName' in request.resource.data) || request.resource.data.studentName is string) &&
+             (!('studentClass' in request.resource.data) || request.resource.data.studentClass is string) &&
+             (!('studentOrder' in request.resource.data) || request.resource.data.studentOrder is string) &&
+             (!('studentPin' in request.resource.data) || request.resource.data.studentPin is string) &&
+             request.resource.data.testSection is string && request.resource.data.testSection.size() > 0 && request.resource.data.testSection.size() < 100 &&
+             request.resource.data.transcript is string && request.resource.data.transcript.size() < 10000 &&
+             request.resource.data.score is number && request.resource.data.score >= 0 && request.resource.data.score <= 10 &&
+             request.resource.data.feedback is string && request.resource.data.feedback.size() < 5000 &&
+             request.resource.data.missingKeywords is list && request.resource.data.missingKeywords.size() <= 50 &&
+             request.resource.data.matchedKeywords is list && request.resource.data.matchedKeywords.size() <= 50 &&
+             request.resource.data.createdAt is number;
+    }
+
+    match /lessons/{lessonId} {
+      allow read: if true;
+      allow create: if isValidLesson();
+      allow update: if isValidLesson();
+      allow delete: if true;
+    }
+
+    match /submissions/{submissionId} {
+      allow read: if true;
+      allow create: if isValidSubmission();
+      allow update: if isValidSubmission();
+      allow delete: if true;
+    }
+  }
+}

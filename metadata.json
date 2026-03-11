@@ -1,0 +1,5 @@
+{
+  "name": "Học Toán Cùng Cô Hiền",
+  "description": "Hệ thống kiểm tra lý thuyết Toán học bằng giọng nói tích hợp AI.",
+  "requestFramePermissions": ["camera", "microphone"]
+}

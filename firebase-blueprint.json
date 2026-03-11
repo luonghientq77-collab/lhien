@@ -1,0 +1,126 @@
+{
+  "entities": {
+    "Lesson": {
+      "title": "Lesson",
+      "description": "A lesson created by a teacher",
+      "type": "object",
+      "properties": {
+        "teacherId": {
+          "type": "string",
+          "description": "The ID of the teacher who created the lesson"
+        },
+        "chapterName": {
+          "type": "string",
+          "description": "The name of the chapter or lesson"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "standardAnswer": { "type": "string" },
+              "gradingCriteria": { "type": "array", "items": { "type": "string" } }
+            },
+            "required": ["name", "standardAnswer", "gradingCriteria"]
+          },
+          "description": "The sections of the test"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "The timestamp when the lesson was created"
+        }
+      },
+      "required": [
+        "teacherId",
+        "chapterName",
+        "sections",
+        "createdAt"
+      ]
+    },
+    "Submission": {
+      "title": "Submission",
+      "description": "A student's submission for a lesson",
+      "type": "object",
+      "properties": {
+        "lessonId": {
+          "type": "string",
+          "description": "The ID of the lesson"
+        },
+        "studentName": {
+          "type": "string",
+          "description": "The name of the student"
+        },
+        "studentOrder": {
+          "type": "string",
+          "description": "The order number of the student"
+        },
+        "studentPin": {
+          "type": "string",
+          "description": "The PIN of the student"
+        },
+        "testSection": {
+          "type": "string",
+          "description": "The section of the test the student chose"
+        },
+        "transcript": {
+          "type": "string",
+          "description": "The transcribed text from the student's voice"
+        },
+        "score": {
+          "type": "number",
+          "description": "The score given by AI"
+        },
+        "feedback": {
+          "type": "string",
+          "description": "The feedback given by AI"
+        },
+        "missingKeywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The keywords the student missed"
+        },
+        "matchedKeywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The keywords the student matched"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "The timestamp when the submission was created"
+        }
+      },
+      "required": [
+        "lessonId",
+        "studentName",
+        "studentOrder",
+        "studentPin",
+        "testSection",
+        "transcript",
+        "score",
+        "feedback",
+        "missingKeywords",
+        "matchedKeywords",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "lessons": {
+      "schema": {
+        "$ref": "#/entities/Lesson"
+      },
+      "description": "Lessons created by teachers"
+    },
+    "submissions": {
+      "schema": {
+        "$ref": "#/entities/Submission"
+      },
+      "description": "Submissions by students"
+    }
+  }
+}
